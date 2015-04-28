@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import net.sf.json.JSONObject;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -46,10 +50,10 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Hello World", Toast.LENGTH_SHORT)
                         .show();
-                //MyBackgroundTask mytask = new MyBackgroundTask();
-                //mytask.execute();
-                MyPostBackgroundTask myPostTask = new MyPostBackgroundTask();
-                myPostTask.execute();
+                MyBackgroundTask mytask = new MyBackgroundTask();
+                mytask.execute();
+                //MyPostBackgroundTask myPostTask = new MyPostBackgroundTask();
+                //myPostTask.execute();
 
             }
         });
@@ -108,7 +112,7 @@ public class MainActivity extends ActionBarActivity {
 
     public String postData() throws IOException {
         HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://10.0.3.2:3000/users/mypost");
+        HttpPost post = new HttpPost("http://10.0.2.2:3000/users");
 
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         pairs.add(new BasicNameValuePair("key1", "value1"));
@@ -129,8 +133,9 @@ public class MainActivity extends ActionBarActivity {
         protected String doInBackground(Void... params) {
 
             try {
-                String result = getUrl("http://10.0.3.2:3000/users");
+                String result = getUrl("http://192.168.1.27:3000/users");
                 Log.d(TAG, "Result of Get URL = "+result);
+                //JSON.par
                 return result;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -140,6 +145,10 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(String item) {
+            Gson gson = new Gson();
+            //Student user = gson.fromJson(item,Student.class);
+            Student []user =  gson.fromJson(item,Student[].class);
+            //responseData.setTextuser.getName());
             Log.d(TAG, "After Execution Result of Get URL = "+item);
         }
     }
@@ -161,11 +170,52 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(String item) {
-
             Log.d(TAG, "Post After Execution Result of Get URL = " + item);
             responseData.setText(item);
         }
 
 
     }
+
+
+    private class MyBackgroundHttpTask extends AsyncTask<Void,Void,String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            try {
+                return postData();
+                //Log.d(TAG, "Result of Get URL = "+result);
+                //return result;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String item) {
+            Log.d(TAG, "Post After Execution Result of Get URL = " + item);
+            responseData.setText(item);
+        }
+    }
+
+
+    private String httpPostCall() throws IOException {
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost("http://10.0.2.2:3000/users");
+
+        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+        pairs.add(new BasicNameValuePair("key1", "value1"));
+        pairs.add(new BasicNameValuePair("key2", "value2"));
+        post.setEntity(new UrlEncodedFormEntity(pairs));
+
+        HttpResponse response = client.execute(post);
+
+        String result = EntityUtils.toString(response.getEntity());
+        Log.d(TAG,"After Post request Data = "+ result );
+        return result;
+
+    }
+
 }

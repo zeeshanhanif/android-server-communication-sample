@@ -11,7 +11,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -103,17 +105,19 @@ public class HttpRequestHandler {
     public void post(String url){
         Map<String, String> params = new HashMap<String, String>();
         params.put("name", "Androidhive");
-        params.put("email", "abc@androidhive.info");
-        params.put("password", "password123");
+        params.put("age", "5");
 
-        JSONObject j = new JSONObject();
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,url, new JSONObject(),
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,url, new JSONObject(params),
                 new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, response.toString());
+                        Gson gson = new Gson();
+                        Student st = gson.fromJson(response.toString(),Student.class);
+                        Log.d(TAG, st.getName());
+                        Log.d(TAG, ""+st.getAge());
                         //pDialog.hide();
                     }
                 }, new Response.ErrorListener() {
@@ -128,6 +132,39 @@ public class HttpRequestHandler {
 
         // Adding request to request queue
         this.addToRequestQueue(jsonObjReq, TAG);
+
+    }
+
+
+    public void postWithObject(String url)throws JSONException{
+        Student st = new Student("Aijaz",44);
+        Gson gson = new Gson();
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,url, new JSONObject(gson.toJson(st)),
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, response.toString());
+                        Gson gson = new Gson();
+                        Student st = gson.fromJson(response.toString(),Student.class);
+                        Log.d(TAG, st.getName());
+                        Log.d(TAG, ""+st.getAge());
+                        //pDialog.hide();
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.getMessage());
+                // hide the progress dialog
+                //pDialog.hide();
+            }
+        });
+
+        // Adding request to request queue
+        this.addToRequestQueue(jsonObjReq, TAG);
+
     }
 
 

@@ -19,6 +19,7 @@ public class VolleyCommunication extends ActionBarActivity {
     private static final String TAG = "VolleyCommunication";
     private Button button1;
     private Button button2;
+    private Button button3;
 
 
     @Override
@@ -28,11 +29,27 @@ public class VolleyCommunication extends ActionBarActivity {
         responseView = (TextView)findViewById(R.id.responseView);
         button1 = (Button)findViewById(R.id.button);
         button2 = (Button)findViewById(R.id.button2);
+        button3 = (Button)findViewById(R.id.button3);
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MyGetBackgroundTask myGetTask = new MyGetBackgroundTask();
+                myGetTask.execute();
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 MyPostBackgroundTask myPostTask = new MyPostBackgroundTask();
+                myPostTask.execute();
+            }
+        });
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyPostObjectBackgroundTask myPostTask = new MyPostObjectBackgroundTask();
                 myPostTask.execute();
             }
         });
@@ -62,7 +79,7 @@ public class VolleyCommunication extends ActionBarActivity {
     }
 
 
-    private class MyPostBackgroundTask extends AsyncTask<Void,Void,String> {
+    private class MyGetBackgroundTask extends AsyncTask<Void,Void,String> {
 
         @Override
         protected String doInBackground(Void... params) {
@@ -71,6 +88,52 @@ public class VolleyCommunication extends ActionBarActivity {
                 //Log.d(TAG, "Result of Get URL = "+result);
                 //return result;
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String item) {
+
+            Log.d(TAG, "Post After Execution Result of Get URL = " + item);
+            responseView.setText(item);
+        }
+    }
+
+    private class MyPostBackgroundTask extends AsyncTask<Void,Void,String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                return postData();
+                //Log.d(TAG, "Result of Get URL = "+result);
+                //return result;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String item) {
+
+            Log.d(TAG, "Post After Execution Result of Get URL = " + item);
+            responseView.setText(item);
+        }
+    }
+
+    private class MyPostObjectBackgroundTask extends AsyncTask<Void,Void,String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                return postDataWithObject();
+                //Log.d(TAG, "Result of Get URL = "+result);
+                //return result;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -99,7 +162,18 @@ public class VolleyCommunication extends ActionBarActivity {
 
         HttpRequestHandler h = HttpRequestHandler.getInstance();
 
-        h.get("http://10.0.2.2:3000/users/data");
+        h.post("http://10.0.2.2:3000/users/postdata");
+
+
+        return null;
+
+    }
+
+    public String postDataWithObject() throws Exception {
+
+        HttpRequestHandler h = HttpRequestHandler.getInstance();
+
+        h.postWithObject("http://10.0.2.2:3000/users/postdata");
 
 
         return null;

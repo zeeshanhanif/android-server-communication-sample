@@ -6,4 +6,14 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+
+router.get('/data', function(req, res, next) {
+  res.send({name:"Test",age:3});
+});
+
+router.get('/postdata', function(req, res, next) {
+  console.log("name = "+req.body.name);
+  console.log("Age = "+req.body.age);
+  res.send({name:req.body.name+"_text",age:3});
+});
 module.exports = router;

@@ -1,5 +1,6 @@
 package com.demo.demoservercommunication;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -33,12 +34,14 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = "TAG";
     private TextView responseData;
+    private Button mMoveToVolley;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         responseData = (TextView)findViewById(R.id.postResponse);
+        mMoveToVolley = (Button)findViewById(R.id.volley);
 
         Button getReq = (Button)findViewById(R.id.getRequest);
         getReq.setOnClickListener(new View.OnClickListener() {
@@ -51,6 +54,14 @@ public class MainActivity extends ActionBarActivity {
                 MyPostBackgroundTask myPostTask = new MyPostBackgroundTask();
                 myPostTask.execute();
 
+            }
+        });
+
+        mMoveToVolley.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,VolleyCommunication.class);
+                startActivity(intent);
             }
         });
     }
